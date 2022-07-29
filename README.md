@@ -41,8 +41,8 @@ to change the name of your app.
 |--------|------------------------|-------------------|
 | POST   | `/sign-up`             | `users#signup`    |
 | POST   | `/sign-in`             | `users#signin`    |
-| PATCH  | `/change-password/` | `users#changepw`  |
-| DELETE | `/sign-out/`        | `users#signout`   |
+| PATCH  | `/change-password/`    | `users#changepw`  |
+| DELETE | `/sign-out/`           | `users#signout`   |
 
 ### API CRUD Routes
 
