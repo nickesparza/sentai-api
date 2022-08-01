@@ -31,6 +31,7 @@ const router = express.Router()
 // GET /teams
 router.get('/teams', (req, res, next) => {
 	Team.find()
+        .populate('owner')
 		.then((teams) => {
 			// `teams` will be an array of Mongoose documents
 			// we want to convert each one to a POJO, so we use `.map` to
@@ -48,6 +49,7 @@ router.get('/teams', (req, res, next) => {
 router.get('/teams/:id', (req, res, next) => {
 	// req.params.id will be set based on the `:id` in the route
 	Team.findById(req.params.id)
+    .populate('owner')
 		.then(handle404)
 		// if `findById` is succesful, respond with 200 and "team" JSON
 		.then((team) => res.status(200).json({ team: team.toObject() }))
@@ -60,7 +62,8 @@ router.get('/teams/:id', (req, res, next) => {
 router.post('/teams', requireToken, (req, res, next) => {
 	// set owner of new team to be current user
 	req.body.team.owner = req.user.id
-
+    console.log('this is the new team', req.body.team)
+    console.log('this is the user id', req.user.id)
 	Team.create(req.body.team)
 		// respond to succesful `create` with status 201 and JSON of new "team"
 		.then((team) => {
@@ -74,9 +77,11 @@ router.post('/teams', requireToken, (req, res, next) => {
 
 // UPDATE
 // PATCH /teams/5a7db6c74d55bc51bdf39793
+// TODO: add requireToken back in when all routes confirmed working
 router.patch('/teams/:id', requireToken, removeBlanks, (req, res, next) => {
 	// if the client attempts to change the `owner` property by including a new
 	// owner, prevent that by deleting that key/value pair
+    // TODO: uncomment this after reimplementing auth
 	delete req.body.team.owner
 
 	Team.findById(req.params.id)
@@ -84,7 +89,8 @@ router.patch('/teams/:id', requireToken, removeBlanks, (req, res, next) => {
 		.then((team) => {
 			// pass the `req` object and the Mongoose record to `requireOwnership`
 			// it will throw an error if the current user isn't the owner
-			requireOwnership(req, team)
+            // TODO: uncomment this after reimplementing auth
+			// requireOwnership(req, team)
 
 			// pass the result of Mongoose's `.update` to the next `.then`
 			return team.updateOne(req.body.team)
@@ -97,12 +103,14 @@ router.patch('/teams/:id', requireToken, removeBlanks, (req, res, next) => {
 
 // DESTROY
 // DELETE /teams/5a7db6c74d55bc51bdf39793
+// TODO: add requireToken back in when all routes confirmed
 router.delete('/teams/:id', requireToken, (req, res, next) => {
 	Team.findById(req.params.id)
 		.then(handle404)
 		.then((team) => {
 			// throw an error if current user doesn't own `team`
-			requireOwnership(req, team)
+            // TODO: uncomment this after reimplementing auth
+			// requireOwnership(req, team)
 			// delete the team ONLY IF the above didn't throw
 			team.deleteOne()
 		})
