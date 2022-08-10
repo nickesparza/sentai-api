@@ -11,7 +11,6 @@ const teamSchema = new Schema({
         type: Array,
         required: true
     },
-    memberCount: Number,
     series: {
         type: Number,
         unique: true,
@@ -37,6 +36,10 @@ teamSchema.virtual('era').get(function () {
     } else {
         return 'Pre-Showa, somehow'
     }
+})
+
+teamSchema.virtual('memberCount').get(function () {
+    return this.colors.length
 })
 
 module.exports = model('Team', teamSchema)
