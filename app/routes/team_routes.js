@@ -47,8 +47,10 @@ router.get('/teams', (req, res, next) => {
 // SHOW
 // GET /teams/5a7db6c74d55bc51bdf39793
 router.get('/teams/:id', (req, res, next) => {
+    console.log(req.params.id)
 	// req.params.id will be set based on the `:id` in the route
-	Team.findById(req.params.id)
+	// Team.findById(req.params.id)
+    Team.findOne({series: req.params.id})
     .populate('owner')
 		.then(handle404)
 		// if `findById` is succesful, respond with 200 and "team" JSON
